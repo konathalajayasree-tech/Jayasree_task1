@@ -7,8 +7,6 @@ import wikipedia
 import webbrowser
 import os
 
-
-
 engine = pyttsx3.init()
 
 def speak(text):
@@ -19,8 +17,17 @@ def speak(text):
 
     engine.runAndWait()
 
+def save_history(command):
 
+    current_time = datetime.datetime.now().strftime("%d-%m-%Y %I:%M:%S %p")
 
+    with open("history.txt", "a") as file:
+
+        file.write(f"[{current_time}] {command}\n")
+
+def clear_history():
+
+    open("history.txt", "w").close()
 
 def listen():
 
@@ -29,20 +36,16 @@ def listen():
 
     print("Listening...")
 
-    # RECORD AUDIO
     recording = sd.rec(
         int(seconds * fs),
         samplerate=fs,
         channels=1,
         dtype='int16',
-
-        # YOUR MICROPHONE DEVICE
         device=1
     )
 
     sd.wait()
 
-    # SAVE AUDIO
     write("output.wav", fs, recording)
 
     recognizer = sr.Recognizer()
@@ -77,24 +80,19 @@ def listen():
 
         return ""
 
-
-
-
 speak("Hello Jayasree, your voice assistant is ready")
-
 
 while True:
 
     command = listen()
 
-  
+    if command != "":
+
+        save_history(command)
 
     if "hello" in command:
 
         speak("Hello Jayasree")
-
-
-   
 
     elif "time" in command:
 
@@ -102,17 +100,11 @@ while True:
 
         speak("Current time is " + current_time)
 
-
-
-
     elif "date" in command:
 
         today = datetime.datetime.now().strftime("%d %B %Y")
 
         speak("Today's date is " + today)
-
-
-  
 
     elif "who is" in command:
 
@@ -130,17 +122,11 @@ while True:
 
             speak("I could not find information")
 
-
-  
-
     elif "open youtube" in command:
 
         speak("Opening YouTube")
 
         webbrowser.open("https://www.youtube.com")
-
-
-   
 
     elif "open google" in command:
 
@@ -148,17 +134,17 @@ while True:
 
         webbrowser.open("https://www.google.com")
 
-
-   
-
     elif "play music" in command:
 
         speak("Opening music folder")
 
         os.startfile("C:\\Users\\heman\\Music")
 
+    elif "clear history" in command:
 
-   
+        clear_history()
+
+        speak("History cleared")
 
     elif "stop" in command or "exit" in command:
 
@@ -166,14 +152,9 @@ while True:
 
         break
 
-
-   
     elif command == "":
 
         speak("Please speak again")
-
-
-   
 
     else:
 
